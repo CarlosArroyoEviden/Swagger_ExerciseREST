@@ -1,0 +1,242 @@
+openapi: 3.0.0
+info:
+  title: API de Ejercicio
+  version: 1.0.0
+  description: API basada en un modelo de datos con entidades como Project, User, Blog, etc.
+
+paths:
+  /projects:
+    get:
+      summary: Lista todos los proyectos
+      responses:
+        '200':
+          description: Lista de proyectos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+    post:
+      summary: Crea un nuevo proyecto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                language:
+                  type: string
+                open:
+                  type: boolean
+                user_nick:
+                  type: string
+              required:
+                - description
+                - language
+                - open
+                - user_nick
+      responses:
+        '201':
+          description: Proyecto creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{id}:
+    get:
+      summary: Obtiene un proyecto por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Proyecto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Proyecto no encontrado
+
+  /projects/{id}/codes:
+    get:
+      summary: Lista los códigos de un proyecto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de códigos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Code'
+    post:
+      summary: Agrega un código a un proyecto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                package:
+                  type: string
+                file:
+                  type: string
+              required:
+                - package
+                - file
+      responses:
+        '201':
+          description: Código creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Code'
+
+  /users/{nick}/phones:
+    get:
+      summary: Lista los teléfonos de un usuario
+      parameters:
+        - name: nick
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de teléfonos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Phone'
+
+  /articles/{id}/tags:
+    post:
+      summary: Asocia una etiqueta a un artículo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag_id:
+                  type: integer
+              required:
+                - tag_id
+      responses:
+        '204':
+          description: Etiqueta asociada con éxito
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        language:
+          type: string
+        open:
+          type: boolean
+    Code:
+      type: object
+      properties:
+        id:
+          type: integer
+        package:
+          type: string
+        file:
+          type: string
+    Detail:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        content:
+          type: string
+        type:
+          type: string
+        budget:
+          type: number
+    User:
+      type: object
+      properties:
+        nick:
+          type: string
+        name:
+          type: string
+    Blog:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        date:
+          type: string
+          format: date-time
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        abstract:
+          type: string
+        content:
+          type: string
+    Phone:
+      type: object
+      properties:
+        id:
+          type: integer
+        value:
+          type: string
+        type:
+          type: string
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+        date:
+          type: string
+          format: date-time
